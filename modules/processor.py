@@ -1,27 +1,29 @@
 import pandas as pd
 
-
 def load_data():
-    """
-    Reads 'health_data.csv', handles missing values, converts date column, and returns a cleaned DataFrame.
-    """
-    # Read the CSV file into a DataFrame
     df = pd.read_csv('data/health_data.csv')
 
-    # Fill missing 'Steps' values with the median of that column
+    import re
+    import numpy as np
+
+    def extract_number(x):
+        if isinstance(x, str):
+            match = re.search(r"\d+\.?\d*", x)
+            return float(match.group()) if match else np.nan
+        return x
+
+    df['Sleep_Hours'] = df['Sleep_Hours'].apply(extract_number)
+
+    # FORCE numeric
+    df['Sleep_Hours'] = pd.to_numeric(df['Sleep_Hours'], errors='coerce')
+
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+
     df['Steps'].fillna(df['Steps'].median(), inplace=True)
-
-    # Fill missing 'Sleep_Hours' values with a default value of 7.0
     df['Sleep_Hours'].fillna(7.0, inplace=True)
-
-    # Fill missing 'Heart_Rate_bpm' values with a default value of 68
     df['Heart_Rate_bpm'].fillna(68, inplace=True)
 
-    # Fill other missing values with the median of their respective columns
-    df.fillna(df.median(), inplace=True)
-
-    # Convert 'Date' column to datetime objects
-    df['Date'] = pd.to_datetime(df['Date'])
+    df.fillna(df.select_dtypes(include='number').median(), inplace=True)
 
     return df
 
@@ -50,3 +52,9 @@ def calculate_recovery_score(df):
     df['Recovery_Score'] = df['Recovery_Score'].clip(lower=0, upper=100)
 
     return df
+
+def process_data():
+    df = load_data()
+    df = calculate_recovery_score(df)
+    return df
+
