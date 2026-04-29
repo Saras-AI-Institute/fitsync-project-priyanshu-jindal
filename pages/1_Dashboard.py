@@ -122,8 +122,13 @@ time_range = st.sidebar.selectbox(
     options=["Last 7 Days", "Last 30 Days", "All time"],
     index=2
 )
+
 # Load the data
-df = process_data()
+@st.cache_data
+def load_data():
+    return process_data()
+
+df = load_data()
 
 # Filter the dataframe based on the selected time range
 if time_range == "Last 7 Days":

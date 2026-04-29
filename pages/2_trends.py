@@ -124,8 +124,11 @@ time_range = st.sidebar.selectbox(
 )
 
 # Load the data
-df = process_data()
+@st.cache_data
+def load_data():
+    return process_data()
 
+df = load_data()
 # Filter the dataframe based on the selected time range
 if time_range == "Last 7 Days":
     df = df[df['Date'] >= df['Date'].max() - pd.Timedelta(days=7)]
