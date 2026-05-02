@@ -142,7 +142,7 @@ st.write("### Summary Statistics")
 st.dataframe(summary_stats)
 
 # Monthly Average Recovery Score
-monthly_avg_recovery = df.resample('M', on='Date').mean().reset_index()
+monthly_avg_recovery = df.resample('ME', on='Date').mean().reset_index()
 avg_recovery_fig = px.line(monthly_avg_recovery, x='Date', y='Recovery_Score',
                           title='Monthly Average Recovery Score')
 
