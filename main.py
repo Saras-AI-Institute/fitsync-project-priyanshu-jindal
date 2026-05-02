@@ -2,6 +2,10 @@ import streamlit as st
 from modules.processor import load_data, calculate_recovery_score
 
 # Load and process data
+@st.cache_data
+def load_data():
+    return process_data()
+
 df = load_data()
 df = calculate_recovery_score(df)
 
